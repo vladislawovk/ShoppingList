@@ -2,6 +2,7 @@ package com.vladislawovk.shoppinglist.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.vladislawovk.shoppinglist.R
@@ -33,6 +34,11 @@ class MainActivity : AppCompatActivity() {
                 ShopListAdapter.VIEW_TYPE_DISABLED, ShopListAdapter.MAX_POOL_SIZE
             )
         }
-
+        shopListAdapter.onShopItemLongClickListener = {
+            viewModel.changeIsEnabledState(it)
+        }
+        shopListAdapter.onShopItemClickListener = {
+            Log.d("MainActivityTest", it.toString())
+        }
     }
 }
