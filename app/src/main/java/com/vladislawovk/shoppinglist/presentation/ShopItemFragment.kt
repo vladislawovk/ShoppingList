@@ -16,7 +16,10 @@ import com.google.android.material.textfield.TextInputLayout
 import com.vladislawovk.shoppinglist.R
 import com.vladislawovk.shoppinglist.domain.ShopItem
 
-class ShopItemFragment : Fragment() {
+class ShopItemFragment(
+    private val screenMode: String = MODE_UNKNOWN,
+    private val shopItemId: Int = ShopItem.UNDEFINED_ID
+) : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
 
@@ -26,8 +29,6 @@ class ShopItemFragment : Fragment() {
     private lateinit var etCount: EditText
     private lateinit var saveButton: Button
 
-    private var screenMode = MODE_UNKNOWN
-    private var shopItemId = ShopItem.UNDEFINED_ID
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +40,7 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parseIntent()
+        parseParams()
         viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         initViews(view)
         addTextChangeListeners()
@@ -120,22 +121,12 @@ class ShopItemFragment : Fragment() {
         }
     }
 
-    private fun parseIntent() {
-        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
+    private fun parseParams() {
+        if (screenMode != MODE_EDIT && screenMode != MODE_ADD) {
             throw RuntimeException("Parameter screen mode is absent")
         }
-        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
-        if (mode != MODE_ADD && mode != MODE_EDIT) {
-            throw RuntimeException("Unknown screen mode: $mode")
-        }
-
-        screenMode = mode
-
-        if (screenMode == MODE_EDIT) {
-            if (!intent.hasExtra(EXTRA_SHOP_ITEM_ID)) {
-                throw RuntimeException("Parameter shopItemId is absent")
-            }
-            shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
+        if (screenMode == MODE_EDIT && shopItemId == ShopItem.UNDEFINED_ID) {
+            throw RuntimeException("Parameter shopItemId is absent")
         }
     }
 
